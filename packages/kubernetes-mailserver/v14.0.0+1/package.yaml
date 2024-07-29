@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=https://glasskube.dev/schemas/v1/package-manifest.json
+
+name: kubernetes-mailserver
+shortDescription: Production-ready fullstack but simple mail server
+longDescription: >
+  Production-ready fullstack but simple mail server
+  (SMTP, IMAP, LDAP, Antispam, Antivirus, etc.) running inside a container.
+iconUrl: https://avatars.githubusercontent.com/u/171660858
+defaultNamespace: kubernetes-mailserver
+helm:
+  chartName: docker-mailserver
+  chartVersion: 4.0.5
+  repositoryUrl: https://docker-mailserver.github.io/docker-mailserver-helm
+  values:
+    installCRDs: "true"
+valueDefinitions:
+  hostname:
+    type: text
+    metadata:
+      description: >
+        The hostname of email server e.g. `example.com`
+    constraints:
+      required: true
+      minLength: 1
+    targets:
+      - chartName: docker-mailserver
+        patch:
+          op: add
+          path: /deployment.env.OVERRIDE_HOSTNAME
+  certificate:
+    type: text
+    metadata:
+      description: >
+        The name of the secret the ssl certificate is stored in.
+    constraints:
+      required: true
+      minLength: 1
+    targets:
+      - chartName: docker-mailserver
+        patch:
+          op: add
+          path: /certificate
